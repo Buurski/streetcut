@@ -1,0 +1,1391 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Street-Cut — Lige din stil.</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter+Tight:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bone:        #EFE8DA;
+      --bone-deep:   #E5DCC7;
+      --ink:         #142235;
+      --ink-deep:    #0B1726;
+      --ink-soft:    #3E5878;
+      --ink-soft-30: rgba(62, 88, 120, 0.32);
+      --ink-soft-50: rgba(62, 88, 120, 0.55);
+      --accent:      #A37A4F;
+
+      --serif:    "EB Garamond", "Garamond", "Times New Roman", serif;
+      --grotesk:  "Inter Tight", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+
+      --maxw: 1320px;
+      --gutter: clamp(20px, 4vw, 56px);
+      --sect: clamp(80px, 11vw, 160px);
+
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *,*::before,*::after { box-sizing: border-box; }
+
+    html, body { background: var(--bone); color: var(--ink); }
+    body {
+      margin: 0;
+      font-family: var(--grotesk);
+      font-size: 17px;
+      line-height: 1.5;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+      font-feature-settings: "ss01", "cv11";
+    }
+    body.mode-bone-deep { background: var(--bone-deep); }
+
+    img { display: block; max-width: 100%; }
+    a   { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; }
+    ::selection { background: var(--ink); color: var(--bone); }
+
+    /* ─── Focus ───────────────────────────────────────────── */
+    :focus { outline: none; }
+    :focus-visible {
+      outline: 2px solid var(--ink-soft);
+      outline-offset: 4px;
+      border-radius: 1px;
+    }
+
+    /* ─── Layout primitives ───────────────────────────────── */
+    .wrap {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+    }
+
+    .eyebrow {
+      font-family: var(--grotesk);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .rule {
+      height: 0;
+      border: 0;
+      border-top: 0.5px solid var(--ink-soft-30);
+      margin: 0;
+    }
+
+    /* ─── Nav ─────────────────────────────────────────────── */
+    .nav {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 100;
+      padding: 22px 0;
+      background: transparent;
+      transition: background 400ms var(--ease), backdrop-filter 400ms var(--ease), padding 300ms var(--ease), border-color 400ms var(--ease);
+      border-bottom: 0.5px solid transparent;
+    }
+    .nav.is-scrolled {
+      background: rgba(239, 232, 218, 0.72);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      backdrop-filter: blur(14px) saturate(140%);
+      padding: 14px 0;
+      border-bottom-color: var(--ink-soft-30);
+    }
+    body.mode-bone-deep .nav.is-scrolled { background: rgba(229, 220, 199, 0.72); }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .nav-logo {
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      height: 18px;
+    }
+    .nav-logo svg { height: 100%; width: auto; display: block; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .nav-cta {
+      font-family: var(--grotesk);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 10px 18px;
+      background: var(--ink);
+      color: var(--bone);
+      border-radius: 1px;
+      border: 0;
+      cursor: default;
+      transition: background 300ms var(--ease);
+    }
+    .nav-cta:hover { background: var(--ink-deep); }
+
+    /* ─── Wipe-underline link (sparing) ───────────────────── */
+    .link-wipe {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+    .link-wipe::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: 0;
+      height: 1px;
+      width: 100%;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 300ms var(--ease);
+    }
+    .link-wipe:hover::after { transform: scaleX(1); }
+    .link-wipe.is-static::after { transform: scaleX(1); transform-origin: left; }
+    .link-wipe.is-static:hover::after { transform: scaleX(0); transform-origin: right; }
+
+    /* ─── Hero ────────────────────────────────────────────── */
+    .hero {
+      padding-top: 160px;
+      padding-bottom: var(--sect);
+    }
+    @media (min-width: 900px) {
+      .hero { padding-top: 200px; }
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 56px;
+      align-items: end;
+    }
+    @media (min-width: 900px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+        gap: clamp(48px, 6vw, 96px);
+        align-items: end;
+      }
+    }
+    .hero-text { padding-bottom: 8px; }
+    .hero-eyebrow { margin-bottom: clamp(28px, 4vw, 48px); display: block; }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(64px, 11vw, 144px);
+      line-height: 0.94;
+      letter-spacing: -0.024em;
+      margin: 0 0 clamp(28px, 3vw, 40px);
+      color: var(--ink);
+    }
+    .hero h1 .ital {
+      font-style: italic;
+      letter-spacing: -0.028em;
+    }
+    .hero-sub {
+      font-family: var(--grotesk);
+      font-size: clamp(17px, 1.4vw, 19px);
+      line-height: 1.45;
+      color: var(--ink-soft);
+      max-width: 38ch;
+      margin: 0 0 clamp(32px, 4vw, 48px);
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      gap: clamp(20px, 3vw, 36px);
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 28px;
+      background: var(--ink);
+      color: var(--bone);
+      font-family: var(--grotesk);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border-radius: 1px;
+      border: 0;
+      cursor: default;
+      transition: transform 220ms var(--ease), background 300ms var(--ease);
+      will-change: transform;
+    }
+    .btn-primary:hover { background: var(--ink-deep); }
+    .btn-primary .dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--bone);
+      opacity: 0.6;
+    }
+    .btn-secondary {
+      font-family: var(--grotesk);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+    }
+
+    .hero-figure {
+      position: relative;
+      isolation: isolate;
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-image {
+      position: relative;
+      aspect-ratio: 4 / 5.2;
+      overflow: hidden;
+      background: var(--bone-deep);
+      will-change: transform;
+      width: 100%;
+      z-index: 2;
+    }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      filter: contrast(1.02);
+      transform: translate3d(0,0,0);
+      transition: transform 800ms var(--ease);
+    }
+    .hero-image::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--bone);
+      transform-origin: right center;
+      transform: scaleX(1);
+      transition: transform 1100ms var(--ease);
+      transition-delay: 320ms;
+    }
+    .hero-image.is-revealed::after { transform: scaleX(0); }
+
+    /* Secondary hero image — size + placement driven by tweaks */
+    .hero-image--inset {
+      position: absolute;
+      width: var(--inset-w, 60%);
+      aspect-ratio: 4 / 3.1;
+      z-index: 1;
+      background: var(--bone-deep);
+      /* default: bottom-right */
+      right: -32%;
+      bottom: -14%;
+      left: auto;
+      top: auto;
+      align-self: auto;
+      margin: 0;
+    }
+    .hero-image--inset img { object-position: center 45%; }
+    .hero-image--inset::after {
+      transform-origin: left center;
+      transition-delay: 900ms;
+      transition-duration: 1000ms;
+    }
+
+    /* — Venstre */
+    .hero-figure[data-pos="left"] .hero-image--inset {
+      right: auto;
+      left: -16%;
+    }
+    /* — Under (natural flow, hangs below with overlap) */
+    .hero-figure[data-pos="below"] .hero-image--inset {
+      position: relative;
+      right: auto;
+      bottom: auto;
+      align-self: flex-end;
+      margin-top: calc(var(--inset-w, 70%) * -0.18);
+      margin-right: -6%;
+      width: var(--inset-w, 72%);
+    }
+
+    @media (max-width: 899px) {
+      .hero-image--inset {
+        right: -8%;
+        bottom: -8%;
+        width: calc(var(--inset-w, 60%) + 4%);
+      }
+      .hero-figure[data-pos="below"] .hero-image--inset {
+        margin-right: -2%;
+      }
+    }
+    body.no-inset .hero-image--inset { display: none; }
+
+    .hero-cap {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      color: var(--bone);
+      mix-blend-mode: difference;
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .hero-cap--inset {
+      left: auto;
+      right: 12px;
+      bottom: 12px;
+      font-size: 9.5px;
+    }
+
+    /* ─── Type entrance ───────────────────────────────────── */
+    .reveal-line {
+      display: block;
+      overflow: hidden;
+    }
+    .reveal-line > .inner {
+      display: inline-block;
+      transform: translateY(115%);
+      opacity: 0;
+      transition: transform 700ms var(--ease), opacity 700ms var(--ease);
+      will-change: transform;
+    }
+    .is-typed .reveal-line > .inner { transform: translateY(0); opacity: 1; }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+    }
+    .fade-up.in { opacity: 1; transform: none; }
+
+    /* ─── Priser ──────────────────────────────────────────── */
+    .section { padding: var(--sect) 0; }
+
+    .sect-head {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    @media (min-width: 800px) {
+      .sect-head {
+        grid-template-columns: 1fr minmax(280px, 1fr);
+        gap: clamp(48px, 8vw, 120px);
+        align-items: end;
+      }
+    }
+    .sect-num {
+      font-family: var(--grotesk);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .sect-num::before {
+      content: "";
+      width: 18px; height: 0.5px; background: var(--ink-soft);
+    }
+    .sect-h2 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(38px, 5vw, 56px);
+      line-height: 1.0;
+      letter-spacing: -0.018em;
+      margin: 0;
+      color: var(--ink);
+      text-wrap: balance;
+    }
+    .sect-h2 .ital { font-style: italic; }
+    .sect-blurb {
+      font-size: 16px;
+      color: var(--ink-soft);
+      max-width: 38ch;
+      margin: 0;
+    }
+
+    .price-list { list-style: none; padding: 0; margin: 0; }
+    .price-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 24px;
+      padding: clamp(22px, 2.6vw, 32px) 0;
+      border-top: 0.5px solid var(--ink-soft-30);
+      transition: background-color 300ms var(--ease), padding-left 300ms var(--ease);
+      padding-left: 0;
+    }
+    .price-row:last-child { border-bottom: 0.5px solid var(--ink-soft-30); }
+    .price-row:hover {
+      background: var(--bone-deep);
+      padding-left: 12px;
+    }
+    body.mode-bone-deep .price-row:hover { background: var(--bone); }
+    .price-name {
+      font-family: var(--serif);
+      font-size: clamp(26px, 3.2vw, 36px);
+      line-height: 1.0;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      font-weight: 400;
+    }
+    .price-name .qual {
+      font-style: italic;
+      color: var(--ink-soft);
+      font-size: 0.62em;
+      margin-left: 14px;
+      letter-spacing: 0;
+    }
+    .price-num {
+      font-family: var(--grotesk);
+      font-size: clamp(18px, 1.5vw, 20px);
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: 0.01em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .price-num .kr { color: var(--ink-soft); font-weight: 400; margin-left: 4px; }
+
+    .price-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      margin-top: clamp(32px, 4vw, 48px);
+      flex-wrap: wrap;
+    }
+    .price-foot .note {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 17px;
+      color: var(--accent);
+      max-width: 42ch;
+    }
+    .price-foot .more {
+      font-family: var(--grotesk);
+      font-size: 14px;
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    /* ─── Saloner ─────────────────────────────────────────── */
+    .salon-grid {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: clamp(40px, 5vw, 72px) clamp(28px, 3vw, 44px);
+    }
+    @media (min-width: 700px) {
+      .salon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1080px) {
+      .salon-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (min-width: 1080px) {
+      .salon-card:nth-child(4) { grid-column: 1 / span 1; }
+      .salon-card:nth-child(4) .thumb { aspect-ratio: 5 / 6; }
+      .salon-card:nth-child(5) .thumb { aspect-ratio: 5 / 6; }
+    }
+    .salon-card .thumb {
+      aspect-ratio: 5 / 6;
+      overflow: hidden;
+      background: var(--bone-deep);
+      margin-bottom: 20px;
+    }
+    .salon-card .thumb img {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: scale(1.02);
+      transition: transform 900ms var(--ease), filter 900ms var(--ease);
+      filter: grayscale(0.05) contrast(1.02);
+    }
+    .salon-card:hover .thumb img { transform: scale(1.06); }
+    .salon-meta {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .salon-loc {
+      font-family: var(--grotesk);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+    .salon-no {
+      font-family: var(--grotesk);
+      font-size: 11px;
+      color: var(--ink-soft);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.08em;
+    }
+    .salon-h {
+      font-family: var(--serif);
+      font-size: clamp(24px, 2.4vw, 30px);
+      line-height: 1.05;
+      letter-spacing: -0.012em;
+      font-weight: 400;
+      margin: 0 0 8px;
+      color: var(--ink);
+    }
+    .salon-desc {
+      font-size: 15px;
+      color: var(--ink-soft);
+      margin: 0 0 16px;
+      max-width: 32ch;
+    }
+    .salon-link {
+      font-family: var(--grotesk);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    /* ─── Quiet quote ─────────────────────────────────────── */
+    .quote {
+      padding: clamp(80px, 10vw, 140px) 0;
+      text-align: center;
+    }
+    .quote p {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: clamp(40px, 6vw, 84px);
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      margin: 0;
+      color: var(--ink);
+      text-wrap: balance;
+    }
+    .quote .meta {
+      margin-top: clamp(28px, 3vw, 40px);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--ink-soft);
+    }
+    .quote .meta .bar { width: 28px; height: 0.5px; background: var(--ink-soft); display: inline-block; }
+    .quote .meta span { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; }
+
+    /* ─── Services ────────────────────────────────────────── */
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      border-top: 0.5px solid var(--ink-soft-30);
+      border-bottom: 0.5px solid var(--ink-soft-30);
+    }
+    @media (min-width: 800px) {
+      .services-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .service {
+      padding: clamp(36px, 4vw, 56px) clamp(28px, 3vw, 44px);
+      border-bottom: 0.5px solid var(--ink-soft-30);
+      transition: background 320ms var(--ease);
+      display: flex;
+      flex-direction: column;
+      min-height: clamp(220px, 28vw, 340px);
+    }
+    .service:last-child { border-bottom: 0; }
+    @media (min-width: 800px) {
+      .service { border-bottom: 0; border-right: 0.5px solid var(--ink-soft-30); }
+      .service:last-child { border-right: 0; }
+    }
+    .service:hover { background: var(--bone-deep); }
+    body.mode-bone-deep .service:hover { background: var(--bone); }
+
+    .service .num {
+      font-family: var(--grotesk);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      margin-bottom: clamp(28px, 4vw, 56px);
+    }
+    .service h3 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(34px, 3.6vw, 44px);
+      line-height: 1.0;
+      letter-spacing: -0.014em;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+    .service p {
+      font-size: 15.5px;
+      color: var(--ink-soft);
+      margin: 0 0 auto;
+      max-width: 28ch;
+    }
+    .service .arrow {
+      margin-top: 32px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--grotesk);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .service .arrow svg { transition: transform 320ms var(--ease); }
+    .service:hover .arrow svg { transform: translateX(6px); }
+
+    /* ─── Footer ──────────────────────────────────────────── */
+    footer {
+      padding: clamp(60px, 8vw, 100px) 0 clamp(40px, 4vw, 56px);
+      border-top: 0.5px solid var(--ink-soft-30);
+      margin-top: clamp(60px, 8vw, 120px);
+    }
+    .foot-top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      margin-bottom: clamp(48px, 6vw, 80px);
+    }
+    @media (min-width: 800px) {
+      .foot-top {
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        align-items: end;
+      }
+    }
+    .foot-logo {
+      color: var(--ink);
+      display: block;
+      height: 22px;
+      margin-bottom: 28px;
+    }
+    .foot-logo svg { height: 100%; width: auto; }
+    .foot-claim {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: clamp(22px, 2.4vw, 28px);
+      line-height: 1.15;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      margin: 0;
+      max-width: 24ch;
+    }
+    .foot-cta {
+      justify-self: start;
+    }
+    @media (min-width: 800px) {
+      .foot-cta { justify-self: end; }
+    }
+    .foot-addr {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 18px 24px;
+      padding: 28px 0;
+      border-top: 0.5px solid var(--ink-soft-30);
+      border-bottom: 0.5px solid var(--ink-soft-30);
+      font-size: 13.5px;
+      color: var(--ink-soft);
+    }
+    @media (min-width: 700px) {
+      .foot-addr { grid-template-columns: repeat(5, 1fr); gap: 24px; }
+    }
+    .foot-addr .a-loc {
+      font-family: var(--grotesk);
+      font-size: 10.5px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .foot-addr .a-line {
+      font-family: var(--grotesk);
+      color: var(--ink);
+      font-size: 14px;
+      display: block;
+    }
+    .foot-bottom {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-top: 28px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+    }
+    .foot-bottom .links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .foot-bottom .links a:hover { color: var(--ink); }
+
+    /* ─── Accent dot (one per section) ───────────────────── */
+    .accent-dot {
+      display: inline-block;
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent);
+      vertical-align: middle;
+      margin-right: 12px;
+      margin-bottom: 3px;
+    }
+    body.no-accent .accent-dot { display: none; }
+    body.no-accent .price-foot .note { color: var(--ink-soft); font-style: italic; }
+
+    /* ─── Reduced motion ──────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
+      .hero-image::after { transform: scaleX(0) !important; }
+      .reveal-line > .inner { transform: none !important; opacity: 1 !important; }
+      .fade-up { opacity: 1 !important; transform: none !important; }
+    }
+
+    /* ─── Small screens ──────────────────────────────────── */
+    @media (max-width: 700px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Nav ─────────────────────────────────────────────── -->
+  <header class="nav" id="nav" data-screen-label="Street Cut Landing">
+    <div class="wrap nav-inner">
+      <a class="nav-logo" href="#top" aria-label="Street-Cut">
+        <svg viewBox="0 0 442 62" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 168px; height: 28px;">
+          <use href="#sc-logo" />
+        </svg>
+      </a>
+      <nav class="nav-links" aria-label="Hovedmenu">
+        <a class="link-wipe" href="#priser">Priser</a>
+        <a class="link-wipe" href="#saloner">Saloner</a>
+        <a class="link-wipe" href="#services">Services</a>
+        <a class="nav-cta" href="https://street-cut.planway.com" target="_blank" rel="noopener" style="color: rgb(239, 232, 218)">Book tid</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Logo defs (loaded once) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="sc-logo" viewBox="0 0 442 62">
+        <g>
+          <path d="M7.10857 32.8396C7.4656 33.8116 7.95246 34.7142 8.6016 35.4779C10.0297 37.1789 11.8798 38.4633 14.1842 39.3659C16.4887 40.2685 18.8905 40.9628 21.4546 41.3794C24.8301 41.9695 27.2969 42.6291 28.8223 43.3928C30.3478 44.1218 31.1268 45.2674 31.1268 46.7601C31.1268 48.2528 30.6075 49.4678 29.5688 50.301C28.5302 51.1341 27.2319 51.759 25.7065 52.1408C24.181 52.5227 22.623 52.6963 21.0651 52.6963C18.4685 52.6963 16.4562 52.3144 15.0281 51.516C13.5675 50.7175 12.8535 49.572 12.8535 48.0098C12.8535 47.7321 12.8859 47.4197 12.9508 47.0378C13.0158 46.6559 13.0807 46.3435 13.1456 46.1005H2.20756C2.07773 46.4824 1.98036 47.0378 1.88299 47.7321C1.78562 48.4264 1.7207 49.086 1.7207 49.7108C1.7207 51.6548 2.20756 53.4253 3.14881 54.918C4.09007 56.4454 5.42081 57.7299 7.07612 58.7713C8.73142 59.8127 10.6464 60.6112 12.7886 61.1666C14.9307 61.6873 17.1703 61.965 19.5396 61.965C22.3309 61.965 25.0573 61.6526 27.7188 60.993C30.3803 60.3682 32.7496 59.3614 34.8918 58.0076C37.034 56.6537 38.7217 54.918 39.9876 52.8351C41.2534 50.7523 41.8701 48.2181 41.8701 45.2674C41.8701 43.1498 41.4157 41.4141 40.5069 39.9908C39.5981 38.5675 38.3647 37.4219 36.8717 36.4846C35.3462 35.5473 33.6909 34.853 31.8408 34.2976C29.9908 33.7422 28.2057 33.3256 26.3881 32.9785C26.1609 32.9437 25.9661 32.8743 25.7389 32.8396H7.10857V32.8396Z"/>
+          <path d="M59.7214 32.8396L57.352 44.7814C57.0275 46.4129 56.7354 47.871 56.5082 49.1554C56.281 50.4398 56.1836 51.6201 56.1836 52.6615C56.1836 54.6056 56.5406 56.2024 57.2222 57.4174C57.9038 58.6324 58.8451 59.5697 59.9811 60.2293C61.1171 60.8889 62.4153 61.3054 63.7785 61.5484C65.1417 61.7914 66.5374 61.8956 67.9006 61.8956C69.2638 61.8956 70.3673 61.7914 71.341 61.5832C72.3472 61.3749 73.1262 61.1666 73.7104 60.9583L75.4955 51.7937C75.0736 51.9673 74.4245 52.1408 73.5157 52.3144C72.6069 52.488 71.7305 52.5921 70.8217 52.5921C69.6533 52.5921 68.8418 52.2797 68.4199 51.6895C67.9655 51.0994 67.7383 50.2663 67.7383 49.1901C67.7383 48.3917 67.8357 47.4197 68.0304 46.3088C68.2252 45.1979 68.5173 43.7747 68.8743 42.0042L70.6919 32.8396H59.689H59.7214Z"/>
+          <path d="M92.0487 32.8396L86.4336 60.993H97.4365L102.11 37.4219C102.435 35.8945 102.922 34.367 103.571 32.8396H92.0811H92.0487Z"/>
+          <path d="M155.501 32.8396H126.063C125.219 35.6862 124.765 38.7411 124.765 41.9695C124.765 45.9269 125.544 49.3984 127.134 52.4185C128.724 55.4387 130.996 57.7646 133.95 59.4656C136.936 61.1666 140.506 61.9997 144.693 61.9997C148.231 61.9997 151.444 61.5484 154.333 60.6459C157.222 59.7433 159.688 58.5283 161.798 57.0009C163.908 55.4734 165.628 53.7724 166.959 51.8978C168.29 50.0232 169.198 48.0792 169.718 46.1005H158.78C158.552 46.8642 158.13 47.628 157.514 48.4264C156.897 49.1901 156.053 49.9191 155.047 50.5787C154.008 51.2383 152.775 51.759 151.282 52.1755C149.789 52.5921 148.069 52.7657 146.056 52.7657C143.525 52.7657 141.48 52.3491 139.922 51.4813C138.364 50.6134 137.196 49.3984 136.449 47.8015C135.703 46.2047 135.313 44.2954 135.313 42.0389C135.313 41.7612 135.378 41.4835 135.378 41.2058H171.211C171.568 40.0602 171.892 38.6369 172.119 36.9359C172.347 35.4432 172.444 34.124 172.477 32.909H155.534L155.501 32.8396Z"/>
+          <path d="M209.608 32.8396H180.169C179.325 35.6862 178.871 38.7411 178.871 41.9695C178.871 45.9269 179.65 49.3984 181.24 52.4185C182.831 55.4387 185.103 57.7646 188.056 59.4656C191.01 61.1666 194.613 61.9997 198.8 61.9997C202.37 61.9997 205.551 61.5484 208.439 60.6459C211.296 59.7433 213.795 58.5283 215.905 57.0009C218.014 55.4734 219.735 53.7724 221.065 51.8978C222.396 50.0232 223.305 48.0792 223.824 46.1005H212.854C212.626 46.8642 212.204 47.628 211.588 48.4264C210.971 49.1901 210.127 49.9191 209.121 50.5787C208.082 51.2383 206.849 51.759 205.356 52.1755C203.863 52.5574 202.143 52.7657 200.13 52.7657C197.599 52.7657 195.554 52.3491 193.996 51.4813C192.438 50.6134 191.27 49.3984 190.523 47.8015C189.777 46.2047 189.387 44.2954 189.387 42.0389C189.387 41.7612 189.452 41.4835 189.452 41.2058H225.285C225.642 40.0602 225.966 38.6369 226.193 36.9359C226.421 35.4432 226.518 34.0546 226.55 32.8396H209.608Z"/>
+          <path d="M242.065 32.8396L239.696 44.7814C239.371 46.4129 239.079 47.871 238.852 49.1554C238.625 50.4398 238.527 51.6201 238.527 52.6615C238.527 54.6056 238.884 56.2024 239.566 57.4174C240.248 58.6324 241.189 59.5697 242.325 60.2293C243.493 60.8889 244.759 61.3054 246.122 61.5484C247.485 61.7914 248.881 61.8956 250.244 61.8956C251.608 61.8956 252.711 61.7914 253.717 61.5832C254.723 61.3749 255.502 61.1666 256.087 60.9583L257.872 51.7937C257.45 51.9673 256.801 52.1408 255.892 52.3144C254.983 52.488 254.107 52.5921 253.198 52.5921C252.029 52.5921 251.218 52.2797 250.796 51.6895C250.342 51.0994 250.114 50.2663 250.114 49.1901C250.114 48.3917 250.212 47.4197 250.407 46.3088C250.601 45.1979 250.861 43.7747 251.251 42.0042L253.068 32.8396H242.065V32.8396Z"/>
+          <path d="M267.414 39.4006H297.307L298.508 32.8396H268.615L267.414 39.4006Z"/>
+          <path d="M307.79 32.8396C307.011 35.6515 306.621 38.6369 306.621 41.9001C306.621 48.0445 308.341 52.9393 311.814 56.5496C315.287 60.1599 320.156 61.9997 326.387 61.9997C329.99 61.9997 333.268 61.479 336.189 60.4029C339.111 59.3267 341.61 57.9034 343.752 56.0983C345.894 54.2931 347.582 52.2797 348.88 50.058C350.178 47.8362 350.99 45.5798 351.347 43.2539H340.441C339.987 44.8855 339.24 46.3782 338.202 47.7668C337.163 49.1554 335.768 50.2315 334.047 51.0647C332.327 51.8978 330.185 52.2797 327.621 52.2797C324.537 52.2797 322.103 51.3424 320.35 49.4678C318.565 47.5932 317.689 44.8508 317.689 41.3099C317.689 38.7063 318.078 36.2763 318.825 34.0199C318.955 33.638 319.15 33.2909 319.312 32.909H307.822L307.79 32.8396Z"/>
+          <path d="M392.6 32.8397L391.529 38.2551C391.107 40.4074 390.263 42.525 388.998 44.5732C387.699 46.6908 386.109 48.4265 384.259 49.7456C382.409 51.0995 380.364 51.7591 378.189 51.7591C375.788 51.7591 374.067 51.1689 372.996 49.9539C371.925 48.7389 371.406 47.2115 371.406 45.3369C371.406 44.1913 371.536 42.9069 371.763 41.4836C371.99 40.0256 372.347 38.2551 372.769 36.1029L373.418 32.805H362.448L361.279 38.637C360.825 40.9976 360.5 42.9416 360.273 44.469C360.046 45.9965 359.916 47.4892 359.916 48.9125C359.916 51.2036 360.338 53.3212 361.149 55.2999C361.993 57.2787 363.356 58.8408 365.239 60.0558C367.154 61.2361 369.686 61.8263 372.834 61.8263C375.625 61.8263 378.222 61.2708 380.689 60.16C383.155 59.0491 385.362 57.5217 387.342 55.5429C387.699 55.1958 387.991 54.7792 388.316 54.4321L387.018 60.9237H397.956L403.571 32.7703H392.633L392.6 32.8397Z"/>
+          <path d="M420.448 32.8396L418.079 44.7814C417.754 46.4129 417.462 47.871 417.235 49.1554C417.008 50.4398 416.91 51.6201 416.91 52.6615C416.91 54.6056 417.267 56.2024 417.949 57.4174C418.63 58.6324 419.572 59.5697 420.708 60.2293C421.844 60.8889 423.142 61.3054 424.505 61.5484C425.901 61.7567 427.264 61.8956 428.627 61.8956C429.99 61.8956 431.094 61.7914 432.068 61.5832C433.041 61.3749 433.853 61.1666 434.437 60.9583L436.222 51.7937C435.8 51.9673 435.151 52.1408 434.242 52.3144C433.333 52.488 432.457 52.5921 431.548 52.5921C430.38 52.5921 429.568 52.2797 429.146 51.6895C428.692 51.0994 428.465 50.2663 428.465 49.1901C428.465 48.3917 428.562 47.4197 428.757 46.3088C428.952 45.1979 429.244 43.7747 429.601 42.0042L431.418 32.8396H420.416H420.448Z"/>
+          <path d="M10.9056 29.4031C10.9056 28.084 11.3924 27.0425 12.3986 26.2441C13.3723 25.4457 14.6057 24.8555 16.0987 24.5431C17.5593 24.1959 19.0198 24.0224 20.4804 24.0224C21.7138 24.0224 22.9147 24.1959 24.0182 24.5431C25.1218 24.8902 26.0305 25.4109 26.7121 26.1052C27.3937 26.7995 27.7183 27.7021 27.7183 28.8477C27.7183 29.1601 27.7183 29.4378 27.6859 29.6808C27.6859 29.9238 27.5885 30.2015 27.5236 30.4793H38.3318C38.4291 30.0974 38.5265 29.6461 38.5914 29.0907C38.6563 28.5352 38.6888 27.9451 38.6888 27.2161C38.6888 24.6472 37.9098 22.4602 36.3194 20.6204C34.729 18.7458 32.6518 17.3225 30.0228 16.3158C27.4262 15.309 24.6024 14.7883 21.6164 14.7883C18.89 14.7883 16.2285 15.1008 13.6644 15.7603C11.1003 16.4199 8.7634 17.3572 6.71861 18.6763C4.67381 19.9955 3.05096 21.6271 1.81759 23.6405C0.584227 25.6539 0 28.0145 0 30.757C0 31.486 0.0649141 32.215 0.162285 32.8746H13.21C11.6845 32.1108 10.9056 30.9653 10.9056 29.4378V29.4031Z"/>
+          <path d="M66.2127 24.925H79.4227L81.3052 15.5868H68.0952L71.1786 0H60.1757L58.7475 7.2206C58.3905 9.1299 58.0335 10.6226 57.7089 11.7682C57.3844 12.9138 56.9624 13.7469 56.4756 14.2676C55.9887 14.7884 55.3071 15.1702 54.4632 15.3438C53.6193 15.5174 52.5158 15.5868 51.0877 15.5868H46.6735L44.791 24.925H55.2097L53.6518 32.8399H64.6547L66.2127 24.925V24.925Z"/>
+          <path d="M100 29.8889C101.136 28.5003 102.564 27.4242 104.252 26.591C105.94 25.7579 107.887 25.376 110.159 25.376C111.587 25.376 112.691 25.5149 113.47 25.8273C114.249 26.1398 114.768 26.3828 114.995 26.591L119.15 15.8643C118.955 15.6907 118.371 15.4477 117.364 15.17C116.391 14.8923 114.995 14.7534 113.21 14.7534C110.906 14.7534 108.763 15.1353 106.816 15.899C104.869 16.6627 103.116 17.7389 101.558 19.1274C100.682 19.8912 99.9026 20.759 99.1561 21.6963L100.357 15.5519H89.419L85.9785 32.8049H98.0525C98.6368 31.7635 99.2534 30.7915 100 29.8889V29.8889Z"/>
+          <path d="M133.269 29.6461C134.697 27.841 136.45 26.4524 138.527 25.4457C140.572 24.4389 142.909 23.9529 145.538 23.9529C147.907 23.9529 149.822 24.3695 151.25 25.1679C152.711 26.0011 153.782 27.0772 154.463 28.4658C155.145 29.785 155.47 31.243 155.502 32.8398H165.953C165.791 29.5767 165.044 26.626 163.681 24.0571C162.123 21.1411 159.884 18.8846 156.995 17.2531C154.074 15.6215 150.536 14.7883 146.382 14.7883C142.487 14.7883 138.852 15.5173 135.444 16.9406C132.036 18.3986 129.05 20.4121 126.485 23.0157C123.921 25.6192 121.909 28.7088 120.481 32.215C120.416 32.4233 120.351 32.6316 120.286 32.8051H131.386C131.938 31.6595 132.555 30.5834 133.301 29.6114L133.269 29.6461Z"/>
+          <path d="M187.407 29.6461C188.835 27.841 190.588 26.4524 192.665 25.4457C194.71 24.4389 197.047 23.9529 199.676 23.9529C202.045 23.9529 203.928 24.3695 205.388 25.1679C206.849 26.0011 207.92 27.0772 208.601 28.4658C209.283 29.785 209.608 31.243 209.608 32.8398H220.059C219.896 29.5767 219.182 26.626 217.787 24.0571C216.229 21.1411 213.989 18.8846 211.101 17.2531C208.212 15.6215 204.642 14.7883 200.487 14.7883C196.592 14.7883 192.957 15.5173 189.549 16.9406C186.141 18.3986 183.155 20.4121 180.591 23.0157C178.027 25.6192 176.014 28.7088 174.586 32.215C174.521 32.4233 174.457 32.6316 174.392 32.8051H185.492C186.044 31.6595 186.66 30.5834 187.407 29.6114V29.6461Z"/>
+          <path d="M248.556 24.925H261.766L263.649 15.5868H250.439L253.522 0H242.519L241.091 7.2206C240.734 9.1299 240.377 10.6226 240.053 11.7682C239.728 12.9138 239.306 13.7469 238.819 14.2676C238.332 14.8231 237.651 15.1702 236.807 15.3438C235.963 15.5174 234.86 15.5868 233.431 15.5868H229.017L227.135 24.925H237.553L235.996 32.8399H246.998L248.556 24.925Z"/>
+          <path d="M347.323 31.1735C347.323 28.5352 346.641 25.9317 345.245 23.4322C343.85 20.9328 341.773 18.8499 338.981 17.2183C336.19 15.5868 332.717 14.7883 328.563 14.7883C324.408 14.7883 320.708 15.4826 317.267 16.8712C313.827 18.2598 310.809 20.2385 308.244 22.8074C305.68 25.3762 303.7 28.4311 302.305 31.972C302.175 32.2497 302.11 32.5621 302.013 32.8398H313.665C314.217 31.7984 314.833 30.7917 315.58 29.9238C316.975 28.2228 318.631 26.9037 320.611 25.9317C322.558 24.9944 324.733 24.5084 327.134 24.5084C329.309 24.5084 331.062 24.8555 332.392 25.5498C333.723 26.2441 334.729 27.2161 335.379 28.4311C336.028 29.6461 336.352 31.0694 336.352 32.6316C336.352 32.701 336.352 32.7704 336.352 32.8398H347.323C347.323 32.8398 347.323 32.7704 347.323 32.701C347.355 32.2497 347.388 31.7637 347.388 31.1735H347.323Z"/>
+          <path d="M397.469 32.84L400.91 15.5869H389.939L386.531 32.84H392.601H397.469Z"/>
+          <path d="M370.789 15.5869H359.819L356.346 32.84H362.448H367.349L370.789 15.5869Z"/>
+          <path d="M426.94 24.925H440.15L442.033 15.5868H428.823L431.906 0H420.903L419.475 7.2206C419.118 9.1299 418.761 10.6226 418.436 11.7682C418.112 12.9138 417.69 13.7469 417.203 14.2676C416.716 14.8231 416.035 15.1702 415.191 15.3438C414.347 15.5174 413.243 15.5868 411.815 15.5868H407.401L405.519 24.925H415.937L414.347 32.8399H425.35L426.94 24.925H426.94Z"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- ─── HERO ────────────────────────────────────────────── -->
+  <section id="top" class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+
+        <div class="hero-text">
+          <span class="eyebrow hero-eyebrow fade-up" id="hero-eyebrow">København <span aria-hidden="true">·</span> Odense</span>
+
+          <h1 id="hero-h1" data-stagger="true" aria-label="Lige din stil.">
+            <span class="reveal-line"><span class="inner">Lige din</span></span>
+            <span class="reveal-line"><span class="inner"><em class="ital">stil.</em></span></span>
+          </h1>
+
+          <p class="hero-sub fade-up" style="transition-delay: 480ms;">
+            Erfarne frisører. Fem saloner.<br />
+            Klip fra <span data-tw="price-from">399</span> kr.
+          </p>
+
+          <div class="hero-ctas fade-up" style="transition-delay: 640ms;">
+            <a class="btn-primary" id="cta-book" href="https://street-cut.planway.com" target="_blank" rel="noopener">
+              Book tid
+              <span class="dot" aria-hidden="true"></span>
+            </a>
+            <a class="btn-secondary link-wipe is-static" href="#priser">Se priser</a>
+          </div>
+        </div>
+
+        <div class="hero-figure" id="hero-figure" data-pos="right" style="--inset-w: 60%;">
+          <figure class="hero-image" id="hero-image">
+            <img id="hero-img" src="assets/photos/hero/hero-1.png" alt="Portræt under et klip — naturligt sidelys, jordede toner." />
+            <figcaption class="hero-cap">№ 01 / Lige din stil</figcaption>
+          </figure>
+          <figure class="hero-image hero-image--inset" id="hero-image-2" aria-hidden="true">
+            <img id="hero-img-2" src="assets/photos/atmosphere/atmosphere-1.png" alt="Saks og kam — et klip i gang." />
+            <figcaption class="hero-cap hero-cap--inset">№ 02 / Klip</figcaption>
+          </figure>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRISER ──────────────────────────────────────────── -->
+  <section id="priser" class="section">
+    <div class="wrap">
+      <div class="sect-head fade-up">
+        <div>
+          <div class="sect-num">01 — Priser</div>
+          <h2 class="sect-h2">
+            <span class="accent-dot" aria-hidden="true"></span>Faste priser.<br />
+            <span class="ital">Ingen overraskelser.</span>
+          </h2>
+        </div>
+        <p class="sect-blurb">
+          De fem mest bookede behandlinger. Samme pris, alle saloner.
+          Hverdag som weekend.
+        </p>
+      </div>
+
+      <ul class="price-list fade-up">
+        <li class="price-row"><span class="price-name">Klip</span><span class="price-num">399<span class="kr">kr</span></span></li>
+        <li class="price-row"><span class="price-name">Klip <span class="qual">+ vask</span></span><span class="price-num">440<span class="kr">kr</span></span></li>
+        <li class="price-row"><span class="price-name">Vask <span class="qual">+ klip + føn</span></span><span class="price-num">480<span class="kr">kr</span></span></li>
+        <li class="price-row"><span class="price-name">Vask <span class="qual">+ klip + føn + styling</span></span><span class="price-num">590<span class="kr">kr</span></span></li>
+        <li class="price-row"><span class="price-name">Luksusbehandling <span class="qual">— en time</span></span><span class="price-num">700<span class="kr">kr</span></span></li>
+      </ul>
+
+      <div class="price-foot fade-up">
+        <p class="note">Hovedbundsmassage og hårkur indgår i luksusbehandlingen.</p>
+        <a class="more link-wipe" href="https://www.street-cut.dk/priser" target="_blank" rel="noopener">Se alle priser&nbsp;→</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SALONER ─────────────────────────────────────────── -->
+  <section id="saloner" class="section">
+    <div class="wrap">
+      <div class="sect-head fade-up">
+        <div>
+          <div class="sect-num">02 — Saloner</div>
+          <h2 class="sect-h2">
+            Fem adresser,<br />
+            <span class="ital">samme klip.</span>
+          </h2>
+        </div>
+        <p class="sect-blurb">
+          Fire saloner i København, én i centrale Odense.
+          Book direkte hos den salon der passer dig — eller vælg den der har en tid i dag.
+        </p>
+      </div>
+
+      <div class="salon-grid fade-up">
+
+        <article class="salon-card">
+          <div class="thumb"><img src="assets/photos/salons/salon-falkoner-alle.png" alt="Salon på Falkoner Allé" loading="lazy" /></div>
+          <div class="salon-meta">
+            <span class="salon-loc">Frederiksberg</span>
+            <span class="salon-no">№ 01</span>
+          </div>
+          <h3 class="salon-h">Falkoner Allé 26AB</h3>
+          <p class="salon-desc">Lige over for Frederiksberg Centret.</p>
+          <a class="salon-link link-wipe" href="https://street-cut.planway.com?d=27405" target="_blank" rel="noopener">Book tid&nbsp;→</a>
+        </article>
+
+        <article class="salon-card">
+          <div class="thumb"><img src="assets/photos/salons/salon-norrebrogade-63.png" alt="Salon på Nørrebrogade 63" loading="lazy" /></div>
+          <div class="salon-meta">
+            <span class="salon-loc">Nørrebro</span>
+            <span class="salon-no">№ 02</span>
+          </div>
+          <h3 class="salon-h">Nørrebrogade 63</h3>
+          <p class="salon-desc">Lige ved Assistens Kirkegård.</p>
+          <a class="salon-link link-wipe" href="https://street-cut.planway.com?d=27407" target="_blank" rel="noopener">Book tid&nbsp;→</a>
+        </article>
+
+        <article class="salon-card">
+          <div class="thumb"><img src="assets/photos/salons/salon-norrebrogade-148.png" alt="Salon på Nørrebrogade 148" loading="lazy" /></div>
+          <div class="salon-meta">
+            <span class="salon-loc">Nørrebro</span>
+            <span class="salon-no">№ 03</span>
+          </div>
+          <h3 class="salon-h">Nørrebrogade 148</h3>
+          <p class="salon-desc">Ved Runddelen, et minut fra metroen.</p>
+          <a class="salon-link link-wipe" href="https://street-cut.planway.com?d=28615" target="_blank" rel="noopener">Book tid&nbsp;→</a>
+        </article>
+
+        <article class="salon-card">
+          <div class="thumb"><img src="assets/photos/salons/salon-radhusstraede.png" alt="Salon på Rådhusstræde" loading="lazy" /></div>
+          <div class="salon-meta">
+            <span class="salon-loc">Indre by</span>
+            <span class="salon-no">№ 04</span>
+          </div>
+          <h3 class="salon-h">Rådhusstræde 3</h3>
+          <p class="salon-desc">Et stenkast fra Rådhuspladsen.</p>
+          <a class="salon-link link-wipe" href="https://street-cut.planway.com?d=27406" target="_blank" rel="noopener">Book tid&nbsp;→</a>
+        </article>
+
+        <article class="salon-card">
+          <div class="thumb"><img src="assets/photos/salons/salon-odense.png" alt="Salon på Slotsgade i Odense" loading="lazy" /></div>
+          <div class="salon-meta">
+            <span class="salon-loc">Odense C</span>
+            <span class="salon-no">№ 05</span>
+          </div>
+          <h3 class="salon-h">Slotsgade 24</h3>
+          <p class="salon-desc">Centrale Odense, to minutter fra Brandts.</p>
+          <a class="salon-link link-wipe" href="https://street-cut.planway.com?d=28616" target="_blank" rel="noopener">Book tid&nbsp;→</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── QUIET QUOTE ─────────────────────────────────────── -->
+  <section class="quote">
+    <div class="wrap fade-up">
+      <p>Et godt klip. <em>Tæt på.</em></p>
+      <div class="meta">
+        <span class="bar" aria-hidden="true"></span>
+        <span>Siden 2011</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SERVICES ────────────────────────────────────────── -->
+  <section id="services" class="section">
+    <div class="wrap">
+      <div class="sect-head fade-up">
+        <div>
+          <div class="sect-num">03 — Services</div>
+          <h2 class="sect-h2">
+            <span class="accent-dot" aria-hidden="true"></span>For alle.<br />
+            <span class="ital">I al sin enkelhed.</span>
+          </h2>
+        </div>
+        <p class="sect-blurb">
+          Hverdagsfrisøren — med tid til at lytte, og smag nok til at sige fra.
+        </p>
+      </div>
+
+      <div class="services-grid fade-up">
+
+        <a class="service" href="https://street-cut.planway.com" target="_blank" rel="noopener">
+          <span class="num">01</span>
+          <h3>Herreklip</h3>
+          <p>Saks, maskine eller en kombination — formet til den måde du faktisk styler dit hår på.</p>
+          <span class="arrow">
+            Book
+            <svg width="22" height="10" viewBox="0 0 22 10" fill="none" aria-hidden="true">
+              <path d="M0 5h20m0 0L16 1m4 4l-4 4" stroke="currentColor" stroke-width="1"/>
+            </svg>
+          </span>
+        </a>
+
+        <a class="service" href="https://street-cut.planway.com" target="_blank" rel="noopener">
+          <span class="num">02</span>
+          <h3>Dameklip</h3>
+          <p>Vask, klip og føn — eller hele behandlingen med styling og hårkur. Du vælger.</p>
+          <span class="arrow">
+            Book
+            <svg width="22" height="10" viewBox="0 0 22 10" fill="none" aria-hidden="true">
+              <path d="M0 5h20m0 0L16 1m4 4l-4 4" stroke="currentColor" stroke-width="1"/>
+            </svg>
+          </span>
+        </a>
+
+        <a class="service" href="https://street-cut.planway.com" target="_blank" rel="noopener">
+          <span class="num">03</span>
+          <h3>Børneklip</h3>
+          <p>Roligt tempo, og en frisør der ved at det første klip ikke skal være det sidste.</p>
+          <span class="arrow">
+            Book
+            <svg width="22" height="10" viewBox="0 0 22 10" fill="none" aria-hidden="true">
+              <path d="M0 5h20m0 0L16 1m4 4l-4 4" stroke="currentColor" stroke-width="1"/>
+            </svg>
+          </span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ──────────────────────────────────────────── -->
+  <footer>
+    <div class="wrap">
+
+      <div class="foot-top">
+        <div>
+          <a class="foot-logo" href="#top" aria-label="Street-Cut">
+            <svg viewBox="0 0 442 62" fill="currentColor" aria-hidden="true"><use href="#sc-logo" /></svg>
+          </a>
+          <p class="foot-claim">Klip fra 399 kr. Fem saloner. Erfarne frisører.</p>
+        </div>
+        <a class="btn-primary foot-cta" href="https://street-cut.planway.com" target="_blank" rel="noopener">
+          Book tid <span class="dot" aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div class="foot-addr">
+        <div>
+          <span class="a-loc">Frederiksberg</span>
+          <span class="a-line">Falkoner Allé 26AB</span>
+        </div>
+        <div>
+          <span class="a-loc">Nørrebro</span>
+          <span class="a-line">Nørrebrogade 63</span>
+        </div>
+        <div>
+          <span class="a-loc">Nørrebro</span>
+          <span class="a-line">Nørrebrogade 148</span>
+        </div>
+        <div>
+          <span class="a-loc">Indre by</span>
+          <span class="a-line">Rådhusstræde 3</span>
+        </div>
+        <div>
+          <span class="a-loc">Odense C</span>
+          <span class="a-line">Slotsgade 24</span>
+        </div>
+      </div>
+
+      <div class="foot-bottom">
+        <div class="links">
+          <a class="link-wipe" href="mailto:street-cut@street-cut.dk">street-cut@street-cut.dk</a>
+          <a class="link-wipe" href="https://instagram.com/streetcutcph" target="_blank" rel="noopener">Instagram</a>
+          <a class="link-wipe" href="https://facebook.com/streetcutdk" target="_blank" rel="noopener">Facebook</a>
+        </div>
+        <div>© 2026 Street-Cut ApS · CVR 33 12 41 87</div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ─── React + Tweaks ──────────────────────────────────── -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+
+  <div id="tweaks-root"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════
+    // Tweak defaults (host parses this JSON block)
+    // ═══════════════════════════════════════════════════════
+    window.TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "headline": "Lige din stil.",
+      "heroPortrait": "hero-1",
+      "heroInset": true,
+      "insetPosition": "right",
+      "insetSize": 81,
+      "accentEnabled": true,
+      "background": "bone",
+      "magneticCta": true
+    }/*EDITMODE-END*/;
+
+    // ═══════════════════════════════════════════════════════
+    // Reduced motion
+    // ═══════════════════════════════════════════════════════
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ═══════════════════════════════════════════════════════
+    // 1.  TYPE ENTRANCE  (staggered fade-up on H1 lines)
+    // ═══════════════════════════════════════════════════════
+    function staggerH1() {
+      const h1 = document.getElementById('hero-h1');
+      if (!h1) return;
+      const lines = h1.querySelectorAll('.reveal-line > .inner');
+      lines.forEach((el, i) => {
+        el.style.transitionDelay = (120 + i * 80) + 'ms';
+      });
+      requestAnimationFrame(() => h1.classList.add('is-typed'));
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // 2.  HERO IMAGE WIPE
+    // ═══════════════════════════════════════════════════════
+    function revealHero() {
+      const img = document.getElementById('hero-image');
+      const img2 = document.getElementById('hero-image-2');
+      if (img)  setTimeout(() => img.classList.add('is-revealed'),  240);
+      if (img2) setTimeout(() => img2.classList.add('is-revealed'), 240);
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // 3.  FADE-UP via IntersectionObserver
+    // ═══════════════════════════════════════════════════════
+    function setupFadeUp() {
+      if (prefersReduced) {
+        document.querySelectorAll('.fade-up').forEach(el => el.classList.add('in'));
+        return;
+      }
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('in');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.18, rootMargin: '0px 0px -10% 0px' });
+      document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // 4.  STICKY NAV state
+    // ═══════════════════════════════════════════════════════
+    function setupNav() {
+      const nav = document.getElementById('nav');
+      const update = () => {
+        if (window.scrollY > 24) nav.classList.add('is-scrolled');
+        else nav.classList.remove('is-scrolled');
+      };
+      update();
+      window.addEventListener('scroll', update, { passive: true });
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // 5.  PARALLAX on hero portrait (Y, 4-8px)
+    // ═══════════════════════════════════════════════════════
+    function setupParallax() {
+      if (prefersReduced) return;
+      const fig = document.getElementById('hero-image');
+      const img = document.getElementById('hero-img');
+      if (!fig || !img) return;
+      let raf = null;
+      const tick = () => {
+        const rect = fig.getBoundingClientRect();
+        const vh = window.innerHeight;
+        // 0 when hero centered in viewport; clamp -1..1
+        const progress = Math.max(-1, Math.min(1, (rect.top + rect.height / 2 - vh / 2) / vh));
+        // shift -8..+8 px on Y, but inversed for parallax (image moves slower)
+        const y = progress * -8;
+        img.style.transform = 'translate3d(0, ' + y.toFixed(2) + 'px, 0) scale(1.03)';
+        raf = null;
+      };
+      window.addEventListener('scroll', () => {
+        if (raf == null) raf = requestAnimationFrame(tick);
+      }, { passive: true });
+      tick();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // 6.  MAGNETIC CTAs (~6px pull)
+    // ═══════════════════════════════════════════════════════
+    function setupMagnetic() {
+      if (prefersReduced) return;
+      const targets = document.querySelectorAll('.btn-primary');
+      targets.forEach(btn => {
+        const STRENGTH = 6;
+        const RADIUS = 110;
+        let raf = null;
+        const onMove = (e) => {
+          const r = btn.getBoundingClientRect();
+          const cx = r.left + r.width / 2;
+          const cy = r.top + r.height / 2;
+          const dx = e.clientX - cx;
+          const dy = e.clientY - cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist > RADIUS) {
+            btn.style.transform = '';
+            return;
+          }
+          const force = (1 - dist / RADIUS);
+          const tx = (dx / RADIUS) * STRENGTH * force * 4;
+          const ty = (dy / RADIUS) * STRENGTH * force * 4;
+          if (raf == null) raf = requestAnimationFrame(() => {
+            btn.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px)`;
+            raf = null;
+          });
+        };
+        const onLeave = () => { btn.style.transform = ''; };
+        // Use document-level listening so the magnetic pull starts before the cursor enters
+        window.addEventListener('mousemove', (e) => {
+          if (!document.body.classList.contains('magnetic-on')) return;
+          onMove(e);
+        });
+        btn.addEventListener('mouseleave', onLeave);
+      });
+    }
+
+    // Boot
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('magnetic-on');
+      setupNav();
+      setupFadeUp();
+      setupParallax();
+      setupMagnetic();
+      if (prefersReduced) {
+        document.getElementById('hero-image').classList.add('is-revealed');
+        const img2 = document.getElementById('hero-image-2');
+        if (img2) img2.classList.add('is-revealed');
+        document.getElementById('hero-h1').classList.add('is-typed');
+        document.querySelectorAll('.hero-eyebrow, .hero-sub, .hero-ctas').forEach(el => el.classList.add('in'));
+      } else {
+        // Eyebrow + sub + CTAs use fade-up but are in initial viewport — add 'in' explicitly
+        requestAnimationFrame(() => {
+          document.querySelectorAll('.hero-eyebrow, .hero-sub, .hero-ctas').forEach(el => el.classList.add('in'));
+        });
+        staggerH1();
+        revealHero();
+      }
+    });
+  </script>
+
+  <!-- ─── Tweaks panel ────────────────────────────────────── -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const HEADLINES = [
+      "Lige din stil.",
+      "Klippet, som du vil have det.",
+      "Københavns enkleste klip.",
+      "Et godt klip. Tæt på."
+    ];
+
+    function setHeadline(text) {
+      const h1 = document.getElementById('hero-h1');
+      if (!h1) return;
+      // Split on whitespace; last word becomes italic
+      const words = text.trim().split(/\s+/);
+      const cutIdx = words.length > 1 ? Math.max(1, words.length - 1) : 1;
+      const first = words.slice(0, cutIdx).join(' ');
+      const last  = words.slice(cutIdx).join(' ');
+      h1.setAttribute('aria-label', text);
+      h1.innerHTML =
+        `<span class="reveal-line"><span class="inner">${first}</span></span>` +
+        (last ? `<span class="reveal-line"><span class="inner"><em class="ital">${last}</em></span></span>` : '');
+      // Re-animate
+      const lines = h1.querySelectorAll('.reveal-line > .inner');
+      lines.forEach((el, i) => el.style.transitionDelay = (i * 80) + 'ms');
+      h1.classList.remove('is-typed');
+      requestAnimationFrame(() => h1.classList.add('is-typed'));
+    }
+
+    function setHeroPortrait(key) {
+      const map = {
+        'hero-1': { src: 'assets/photos/hero/hero-1.png', alt: 'Editorial portræt — sidelys, jordede toner.' },
+        'hero-2': { src: 'assets/photos/hero/hero-2.png', alt: 'Portræt set ovenfra — kort klip, naturligt lys.' },
+        'atmos':  { src: 'assets/photos/atmosphere/atmosphere-1.png', alt: 'Frisøren midt i et klip.' }
+      };
+      const v = map[key] || map['hero-1'];
+      const img = document.getElementById('hero-img');
+      img.src = v.src;
+      img.alt = v.alt;
+      // re-wipe
+      const fig = document.getElementById('hero-image');
+      fig.classList.remove('is-revealed');
+      requestAnimationFrame(() => requestAnimationFrame(() => fig.classList.add('is-revealed')));
+    }
+
+    function setHeroInset(on) {
+      if (on) document.body.classList.remove('no-inset');
+      else document.body.classList.add('no-inset');
+    }
+    function setInsetPosition(pos) {
+      const fig = document.getElementById('hero-figure');
+      if (!fig) return;
+      fig.setAttribute('data-pos', pos);
+    }
+    function setInsetSize(pct) {
+      const fig = document.getElementById('hero-figure');
+      if (!fig) return;
+      fig.style.setProperty('--inset-w', pct + '%');
+    }
+    function setBackground(mode) {
+      if (mode === 'bone-deep') document.body.classList.add('mode-bone-deep');
+      else document.body.classList.remove('mode-bone-deep');
+    }
+    function setAccent(on) {
+      if (on) document.body.classList.remove('no-accent');
+      else document.body.classList.add('no-accent');
+    }
+    function setMagnetic(on) {
+      if (on) document.body.classList.add('magnetic-on');
+      else {
+        document.body.classList.remove('magnetic-on');
+        document.querySelectorAll('.btn-primary').forEach(b => b.style.transform = '');
+      }
+    }
+
+    function App() {
+      const [t, setTweak] = useTweaks(window.TWEAK_DEFAULTS);
+
+      useEffect(() => { setHeadline(t.headline); }, [t.headline]);
+      useEffect(() => { setHeroPortrait(t.heroPortrait); }, [t.heroPortrait]);
+      useEffect(() => { setHeroInset(t.heroInset); }, [t.heroInset]);
+      useEffect(() => { setInsetPosition(t.insetPosition); }, [t.insetPosition]);
+      useEffect(() => { setInsetSize(t.insetSize); }, [t.insetSize]);
+      useEffect(() => { setBackground(t.background); }, [t.background]);
+      useEffect(() => { setAccent(t.accentEnabled); }, [t.accentEnabled]);
+      useEffect(() => { setMagnetic(t.magneticCta); }, [t.magneticCta]);
+
+      return (
+        <TweaksPanel title="Tweaks">
+          <TweakSection label="Hero" />
+          <TweakSelect label="Headline" value={t.headline}
+                       options={HEADLINES}
+                       onChange={(v) => setTweak('headline', v)} />
+          <TweakRadio  label="Portræt" value={t.heroPortrait}
+                       options={[
+                         { value: 'hero-1', label: 'Profil' },
+                         { value: 'hero-2', label: 'Top' },
+                         { value: 'atmos',  label: 'Klip'  }
+                       ]}
+                       onChange={(v) => setTweak('heroPortrait', v)} />
+          <TweakToggle label="Klip-billede"
+                       value={t.heroInset}
+                       onChange={(v) => setTweak('heroInset', v)} />
+          <TweakRadio  label="Placering" value={t.insetPosition}
+                       options={[
+                         { value: 'below', label: 'Under'   },
+                         { value: 'right', label: 'Højre'   },
+                         { value: 'left',  label: 'Venstre' }
+                       ]}
+                       onChange={(v) => setTweak('insetPosition', v)} />
+          <TweakSlider label="Størrelse" value={t.insetSize}
+                       min={40} max={95} step={1} unit="%"
+                       onChange={(v) => setTweak('insetSize', v)} />
+
+          <TweakSection label="Tone" />
+          <TweakRadio  label="Baggrund" value={t.background}
+                       options={[
+                         { value: 'bone',      label: 'Bone' },
+                         { value: 'bone-deep', label: 'Bone deep' }
+                       ]}
+                       onChange={(v) => setTweak('background', v)} />
+          <TweakToggle label="Varm accent"
+                       value={t.accentEnabled}
+                       onChange={(v) => setTweak('accentEnabled', v)} />
+
+          <TweakSection label="Motion" />
+          <TweakToggle label="Magnetisk CTA"
+                       value={t.magneticCta}
+                       onChange={(v) => setTweak('magneticCta', v)} />
+        </TweaksPanel>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('tweaks-root'));
+    root.render(<App />);
+  </script>
+
+</body>
+</html>
