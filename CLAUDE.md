@@ -15,7 +15,7 @@ A single-page editorial landing site for Street-Cut — a Danish hair salon chai
 ## File map
 
 ```
-Street Cut Landing.html        # production page
+index.html                     # production page (renamed from "Street Cut Landing.html" for clean root URL)
 DESIGN.md                      # design system notes (read first when restyling)
 CLAUDE.md                      # this file
 assets/                        # photos + logos used by the page
